@@ -284,14 +284,18 @@ def exec_concurrent(context: PdfContext):
         # Copy text file to destination
         copy_final(text, context.options.sidecar, context)
 
-    # Merge layers to one single pdf
-    pdf = ocrgraft.finalize()
+    if context.options.output_type == 'hocr':
+        hocr = ocrgraft.finalize()
 
-    # PDF/A and metadata
-    pdf = post_process(pdf, context)
+    if context.options.output_type.startswith('pdfa'):
+        # Merge layers to one single pdf
+        pdf = ocrgraft.finalize()
 
-    # Copy PDF file to destination
-    copy_final(pdf, context.options.output_file, context)
+        # PDF/A and metadata
+        pdf = post_process(pdf, context)
+
+        # Copy PDF file to destination
+        copy_final(pdf, context.options.output_file, context)
 
 
 class NeverRaise(Exception):
